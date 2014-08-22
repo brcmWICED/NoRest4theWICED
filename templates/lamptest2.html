@@ -46,85 +46,85 @@ $(document).ready(
         });
     }
 
-        function getGraph(id, d1)
-            {
-                // After creating the chart, store it on the global window object
-                if (!obj) {
-                    obj = new RGraph.Line(id, d1)
-                        .set('xticks', 50)
-                        .set('background.grid.vlines', false)
-                        .set('background.grid.border', false)
-                        .set('background.barcolor1', 'white')
-                        .set('background.barcolor2', 'white')
-                        .set('title.xaxis', 'Last 30 seconds')
-                        .set('title.vpos', 0.5)
-                        .set('title', 'Server Response Time')
-                        .set('title.yaxis.pos', 0.5)
-                        .set('title.xaxis.pos', 0.5)
-                        .set('colors', ['black'])
-                        .set('linewidth',0.5)
-                        .set('yaxispos', 'right')
-                        .set('ymax', 1000)
-                        .set('xticks', 25)
-                        .set('filled', true)
-                        .set('numyticks', 2)
-                        .set('tickmarks', null)
-                        .set('ylabels.count', 5)
-                        .set('gutter.right', 40)
+            function getGraph(id, d1)
+                {
+                    // After creating the chart, store it on the global window object
+                    if (!obj) {
+                        obj = new RGraph.Line(id, d1)
+                            .set('xticks', 50)
+                            .set('background.grid.vlines', false)
+                            .set('background.grid.border', false)
+                            .set('background.barcolor1', 'white')
+                            .set('background.barcolor2', 'white')
+                            .set('title.xaxis', 'Last 30 seconds')
+                            .set('title.vpos', 0.5)
+                            .set('title', 'Server Response Time')
+                            .set('title.yaxis.pos', 0.5)
+                            .set('title.xaxis.pos', 0.5)
+                            .set('colors', ['black'])
+                            .set('linewidth',0.5)
+                            .set('yaxispos', 'right')
+                            .set('ymax', 1000)
+                            .set('xticks', 25)
+                            .set('filled', true)
+                            .set('numyticks', 2)
+                            .set('tickmarks', null)
+                            .set('ylabels.count', 5)
+                            .set('gutter.right', 40)
 
 
 
-                    var grad = obj.context.createLinearGradient(0,0,0,250);
-                    grad.addColorStop(0, '#efefef');
-                    grad.addColorStop(0.9, 'rgba(0,0,0,0)');
+                        var grad = obj.context.createLinearGradient(0,0,0,250);
+                        grad.addColorStop(0, '#efefef');
+                        grad.addColorStop(0.9, 'rgba(0,0,0,0)');
 
-                    obj.set('fillstyle', [grad]);
+                        obj.set('fillstyle', [grad]);
+                    }
+
+                    return obj;
                 }
 
-                return obj;
-            }
+        function drawGraph (new_data)
+                {
+                    // "cache" this in a local variable
+                    var _RG = RGraph;
 
-    function drawGraph (new_data)
-            {
-                // "cache" this in a local variable
-                var _RG = RGraph;
+                    // Update the HTML counter - this is totally optional
+                    document.getElementById("num_updates").innerHTML = parseInt(document.getElementById("num_updates").innerHTML) + 1;
 
-                // Update the HTML counter - this is totally optional
-                document.getElementById("num_updates").innerHTML = parseInt(document.getElementById("num_updates").innerHTML) + 1;
+                    RGraph.clear(document.getElementById("cvs"));
 
-                RGraph.clear(document.getElementById("cvs"));
+                    var graph = getGraph('cvs', d1);
+                    graph.draw();
 
-                var graph = getGraph('cvs', d1);
-                graph.draw();
+                    d1.push(new_data);
 
-                d1.push(new_data);
+                    if (d1.length > 600) {
+                        d1 = _RG.array_shift(d1);
+                    }
 
-                if (d1.length > 600) {
-                    d1 = _RG.array_shift(d1);
+                    if (RGraph.ISIE8) {
+                        alert('[MSIE] Sorry, Internet Explorer 8 is not fast enough to support animated charts');
+                    } else {
+                        obj.original_data[0] = d1;
+                        //setTimeout(drawGraph, 50);
+                    }
                 }
+        function updateGraph(){
+            //alert("updating");
+            $.get("/getlatestdelay?key=delay", function(data,status){
+                //alert("update graph");
+                console.log(data);
+                drawGraph(parseInt(data));
+                //alert("drawed");
+                setTimeout(updateGraph, 100);
+    	    });
 
-                if (RGraph.ISIE8) {
-                    alert('[MSIE] Sorry, Internet Explorer 8 is not fast enough to support animated charts');
-                } else {
-                    obj.original_data[0] = d1;
-                    //setTimeout(drawGraph, 50);
-                }
-            }
-    function updateGraph(){
-        //alert("updating");
-        $.get("/getlatestdelay?key=delay", function(data,status){
-            //alert("update graph");
-            console.log(data);
-            drawGraph(parseInt(data));
-            //alert("drawed");
-            setTimeout(updateGraph, 100);
-	    });
+        }
 
-    }
-
-</script>
+    </script>
 <style>
-	canvas {
+    canvas {
 padding-left: 0;
 padding-right: 0;
 margin-left: auto;
@@ -149,7 +149,7 @@ width: 800px;
 <div align="center">
     <p>Status of lamp is: <span id="status_lamp"></span></p>
 </div>
-<div>
+<div align="center">
   <canvas id="cvs" width="800" height="250">[No canvas support]</canvas>
             <div style="margin-left: 25px">
             Number of updates: <span id="num_updates">0</span>
