@@ -7,26 +7,6 @@ import matplotlib.pyplot as plt
 app = Flask(__name__)
 app.secret_key = 'This is really unique and secret'
 
-@app.route('/invert')
-def invert():
-    key = request.args.get('key')
-    #print "key = %s, value = %s" % (key, value)
-    if os.path.isfile(key + '.txt'):
-        with open (key+'.txt', 'r') as file:
-            current_value = file.read()
-        if current_value == '1':
-            current_value = '0'
-        else:
-            current_value = '1'
-        with open (key+'.txt', 'w') as file:
-            file.write(current_value)
-        if current_value == '1':
-            return "ON"
-        else:
-            return "OFF"
-    else:
-        return "invalid"
-
 @app.route('/main')
 #this function renders the html template
 def index():
@@ -53,10 +33,92 @@ def lampcontrol1():
 def lampcontrol2():
     return render_template("lamptest2.html")
 
+@app.route('/buttons')
+#this function renders the LAMPtest html
+def buttoncreate():
+    return render_template("buttons.html")
+
+
+
 @app.route('/combo')
 #this function renders the image switch html
 def combo():
     return render_template("combined.html")
+
+
+@app.route('/invert')
+def invert():
+    key = request.args.get('key')
+    #print "key = %s, value = %s" % (key, value)
+    if os.path.isfile(key + '.txt'):
+        with open (key+'.txt', 'r') as file:
+            current_value = file.read()
+        if current_value == '1':
+            current_value = '0'
+        else:
+            current_value = '1'
+        with open (key+'.txt', 'w') as file:
+            file.write(current_value)
+        if current_value == '1':
+            return "ON"
+        else:
+            return "OFF"
+    else:
+        return "invalid"
+
+@app.route('/rgbpost')
+def postrgb():
+    key = request.args.get('key')
+    #print "key = %s, value = %s" % (key, value)
+    if os.path.isfile(key + '.txt'):
+        with open (key+'.txt', 'r') as file:
+            current_value = file.read()
+        #0 = off
+        #1 = red
+        #2 = blue
+        #3 = green
+        #4 = yellow
+        #5 = purple
+        #6 = cerulean?
+        #7 = white
+            switch(current_value) {
+                case 1:
+                    with open (key+'.txt', 'w') as file:
+                        file.write(current_value)
+                    if (current_value == '1'):
+                        current_value = '0';
+                    else
+                        current_value = '1';
+                        return current_value
+                    break;
+                case 2:
+                    with open (key+'.txt', 'w') as file:
+                        file.write(current_value)
+                    if (current_value == '2'):
+                        current_value = '0';
+                    else
+                        current_value = '2';
+                        return current_value
+                    break;
+                case 3:
+                    with open (key+'.txt', 'w') as file:
+                        file.write(current_value)
+                    if (current_value == '1'):
+                        current_value = '0';
+                    else
+                        return current_value
+                    break;
+                case 4:
+                    with open (key+'.txt', 'w') as file:
+                        file.write(current_value)
+                    return current_value
+                    break;
+                case 5:
+                    with open (key+'.txt', 'w') as file:
+                        file.write(current_value)
+                    return current_value
+                    break;
+                case 6:
 
 @app.route('/updatedelay')
 def updatedelay():
