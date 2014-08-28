@@ -66,13 +66,14 @@ def invert():
     else:
         return "invalid"
 
-@app.route('/rgbpost')
-def postrgb():
-    key = request.args.get('key')
+#@app.route('/rgbpost')
+#def postrgb():
+    #key = request.args.get('key')
+    #value=request.args.get('value')
     #print "key = %s, value = %s" % (key, value)
-    if os.path.isfile(key + '.txt'):
-        with open (key+'.txt', 'r') as file:
-            current_value = file.read()
+    #if os.path.isfile(key + '.txt'):
+        #with open (key+'.txt', 'r') as file:
+            #current_value = file.read()
         #0 = off
         #1 = red
         #2 = blue
@@ -81,44 +82,6 @@ def postrgb():
         #5 = purple
         #6 = cerulean?
         #7 = white
-            switch(current_value) {
-                case 1:
-                    with open (key+'.txt', 'w') as file:
-                        file.write(current_value)
-                    if (current_value == '1'):
-                        current_value = '0';
-                    else
-                        current_value = '1';
-                        return current_value
-                    break;
-                case 2:
-                    with open (key+'.txt', 'w') as file:
-                        file.write(current_value)
-                    if (current_value == '2'):
-                        current_value = '0';
-                    else
-                        current_value = '2';
-                        return current_value
-                    break;
-                case 3:
-                    with open (key+'.txt', 'w') as file:
-                        file.write(current_value)
-                    if (current_value == '1'):
-                        current_value = '0';
-                    else
-                        return current_value
-                    break;
-                case 4:
-                    with open (key+'.txt', 'w') as file:
-                        file.write(current_value)
-                    return current_value
-                    break;
-                case 5:
-                    with open (key+'.txt', 'w') as file:
-                        file.write(current_value)
-                    return current_value
-                    break;
-                case 6:
 
 @app.route('/updatedelay')
 def updatedelay():
@@ -177,6 +140,18 @@ def getdata():
             return "OFF"
     else:
         return 'invalid'
+
+@app.route('/getrgbdata')
+def getrgbdata():
+    key = request.args.get('key')
+    #value = request.args.get('value')
+    #print "key = %s, value = %s" % (key, value)
+
+    #checks if the file exists, then reads existing file and returns the value
+    if os.path.isfile(key + '.txt'):
+        with open (key+'.txt', 'r') as file:
+            value = file.read()
+        return value;
 
 @app.route('/getdelaydata')
 def getDelayData():
